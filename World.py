@@ -15,6 +15,8 @@ tfont=pygame.font.Font(pdf,32)
 bfont=pygame.font.Font(pdf,64)
 floor=Img.img32("Floor")
 tt=Img.img("TileTab")
+sel=Img.img32("Sel")
+editorclasses=[Pipe.Source,Pipe.Drain,Pipe.Block]
 class World(object):
     size=(13,13)
     score=0
@@ -23,10 +25,21 @@ class World(object):
     fx=0
     fy=0
     nd=(0,1)
-    def __init__(self):
+    def __init__(self,level):
         self.objects=[[None]*self.size[1] for _ in range(self.size[0])]
-        self.objects[0][0]=Pipe.Source(2)
-        self.objects[12][12]=Pipe.Drain(0)
+        lfile=open("levels/"+level)
+        llines=lfile.readlines()
+        for x,row in enumerate(llines):
+            for y,n in enumerate(row.split()):
+                if n!="0":
+                    obj=n.split(":")
+                    for c in editorclasses:
+                        if c.symb==obj[0]:
+                            self.objects[x][y]=c(int(obj[1]))
+                            if obj[0]=="S":
+                                self.fx=x
+                                self.fy=y
+                                self.nd=D.get_dir(int(obj[1]))
         try:
             hsfile=open("HS.sav")
             self.hs=int(hsfile.readline())
@@ -126,3 +139,49 @@ class World(object):
         pygame.display.flip()
         pygame.time.wait(2000)
         sys.exit("success")
+class EditWorld(object):
+    size=(13,13)
+    score=0
+    ttgo=3660
+    ttflow=0
+    fx=0
+    fy=0
+    nd=(0,1)
+    def __init__(self):
+        self.objects=[[None]*self.size[1] for _ in range(self.size[0])]
+        self.sel=0
+        self.objlist=[x(0) for x in editorclasses]
+    def render_update(self,screen,events):
+        for e in events:
+            if e.type==pygame.QUIT:
+                sys.exit()
+            elif e.type==pygame.MOUSEBUTTONDOWN:
+                if e.button==1:
+                    mx,my=pygame.mouse.get_pos()
+                    if all([32<=x<14*32 for x in [mx,my]]):
+                        mx,my=[x//32-1 for x in [mx,my]]
+                        self.objects[mx][my]=editorclasses[self.sel](self.objlist[self.sel].d)
+                    elif my>=480 and mx<len(self.objlist)*32:
+                        self.sel=mx//32
+                if e.button==3:
+                    self.objlist[self.sel].d=(self.objlist[self.sel].d+1)%4
+            elif e.type==pygame.KEYDOWN and e.key==pygame.K_s:
+                save=open("levels/save.sav","w")
+                for row in self.objects:
+                    save.write(" ".join([self.objconv(o) for o in row]) + "\n")
+                save.close()
+                sys.exit()
+        screen.fill((200,200,200))
+        for x in range(13):
+            for y in range(13):
+                screen.blit(floor,(x*32+32,y*32+32))
+                if self.objects[x][y]:
+                    screen.blit(self.objects[x][y].get_img(),(x*32+32,y*32+32))
+        for n,o in enumerate(self.objlist):
+            screen.blit(o.get_img(),(n*32,480))
+            if n==self.sel:
+                screen.blit(sel,(n*32,480))
+    def objconv(self,obj):
+        if obj is None:
+            return "0"
+        return obj.symb+":"+str(obj.d)

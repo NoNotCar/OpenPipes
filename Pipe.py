@@ -10,6 +10,7 @@ class Pipe(object):
     ends=[]
     filled=False
     name="Pipe"
+    symb="P"
     def __init__(self,d):
         self.d=d
         self.get_ends(self.d)
@@ -69,12 +70,19 @@ class X2Pipe(Pipe):
         return self.imgs[x][self.d]
 
 class Source(Pipe):
+    symb = "S"
     imgs=rloadf("Source")
     def get_otherend(self,ed):
         return D.get_dir(self.d)
 class Drain(Pipe):
+    symb = "D"
     img=Img.img32("Drain")
     name="Drain"
     ends=D.directions
+    def get_img(self):
+        return self.img
+class Block(Pipe):
+    img=Img.img32("Block")
+    symb = "B"
     def get_img(self):
         return self.img
