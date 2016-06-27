@@ -32,6 +32,7 @@ class World(object):
         self.objects=[[None]*self.size[1] for _ in range(self.size[0])]
         lfile=open(Img.np("levels//%s-%s.sav" % tuple(level)))
         llines=lfile.readlines()
+        del llines[0]
         for x,row in enumerate(llines):
             for y,n in enumerate(row.split()):
                 if n!="0":

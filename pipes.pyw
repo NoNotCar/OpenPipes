@@ -10,6 +10,8 @@ tfont=pygame.font.Font(pdf,32)
 bfont=pygame.font.Font(pdf,64)
 pygame.display.set_caption("OpenPipes")
 pygame.display.set_icon(Img.img32("PipeX"))
+medals={"S":[1500,3000,6000],"M":[2000,5000,9000],"H":[4000,10000,15000]}
+medalcolours=[(0,0,0),(127,51,0),(240,240,240),(219,182,0)]
 lsel=None
 scrolly=0
 try:
@@ -22,16 +24,25 @@ except IOError:
     maxlevel=1
     hss=[]
 x=1
+medallevels=[]
 while True:
     level=(1,x)
     try:
         testlevel=open(Img.np("levels//%s-%s.sav" % tuple(level)))
+        medallevels.append(testlevel.readline()[:1])
         testlevel.close()
         x+=1
     except IOError:
         umax=x-1
         break
 while True:
+    amedals=[]
+    for n,hs in enumerate(hss):
+        am=0
+        for md in medals[medallevels[n]]:
+            if hs>=md:
+                am+=1
+        amedals.append(am)
     breaking=False
     lset=range(1,(maxlevel if maxlevel<umax else umax)+1)
     while not breaking:
@@ -58,7 +69,7 @@ while True:
             pygame.draw.rect(screen,(200,200,200),pygame.Rect(0,n*64+64-scrolly,640,64))
             Img.bcentrex(tfont,"WORLD 1-%s" % (str(l)),screen,n*64+68-scrolly)
             if l!=maxlevel:
-                Img.bcentrex(tfont,"HIGH SCORE: "+str(hss[l-1]),screen,n*64+100-scrolly,(0,200,0))
+                Img.bcentrex(tfont,"HIGH SCORE: "+str(hss[l-1]),screen,n*64+100-scrolly,medalcolours[amedals[n]])
         pygame.display.flip()
         clock.tick(60)
     level=[1,lsel]
