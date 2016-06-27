@@ -18,7 +18,7 @@ floor=Img.img32("Floor")
 ffloor=Img.img32("FloorFixed")
 tt=Img.img("TileTab")
 sel=Img.img32("Sel")
-editorclasses=[Pipe.Source,Pipe.Drain,Pipe.Block,Pipe.GoldPipe,Pipe.SPipe,Pipe.BPipe,Pipe.XPipe,Pipe.X2Pipe]
+editorclasses=[Pipe.Source,Pipe.Drain,Pipe.Block,Pipe.GoldPipe,Pipe.SPipe,Pipe.BPipe,Pipe.XPipe,Pipe.X2Pipe,Pipe.OWPipe]
 class World(object):
     size=(13,13)
     score=0

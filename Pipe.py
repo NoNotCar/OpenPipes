@@ -98,3 +98,11 @@ class GoldPipe(SPipe):
     imgs=rload("PipeGold")
     def get_img(self):
         return SPipe.imgs[1][self.d] if self.filled else self.imgs[self.d]
+class OWPipe(Pipe):
+    imgs=rloadf("OWPipe")
+    bonus = 200
+    def get_ends(self,d):
+        self.ends=[D.get_dir(d)]
+    def get_other_end(self,ed):
+        return D.anti(ed)
+
