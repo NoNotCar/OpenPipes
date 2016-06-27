@@ -11,6 +11,7 @@ bfont=pygame.font.Font(pdf,64)
 pygame.display.set_caption("OpenPipes")
 pygame.display.set_icon(Img.img32("PipeX"))
 lsel=None
+scrolly=0
 try:
     hsfile=open("HS.sav")
     hss=hsfile.readlines()
@@ -38,18 +39,26 @@ while True:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                my=pygame.mouse.get_pos()[1]
-                sel=(my-70)//64
-                if 0<=sel<len(lset):
-                    lsel=lset[sel]
-                    breaking=True
+                if event.button==1:
+                    my=pygame.mouse.get_pos()[1]
+                    sel=(my-70+scrolly)//64
+                    if 0<=sel<len(lset):
+                        lsel=lset[sel]
+                        breaking=True
+                elif event.button in [4,5]:
+                    scrolly+=10 if event.button==5 else -10
+                    if scrolly<0:
+                        scrolly=0
+                    if scrolly>(64+len(lset)*64)-512:
+                        scrolly=(64+len(lset)*64)-512
         screen.fill((0, 0, 0))
-        Img.bcentrex(bfont,"SELECT LEVEL",screen,2,(255,255,255))
+        if scrolly<64:
+            Img.bcentrex(bfont,"SELECT LEVEL",screen,2-scrolly,(255,255,255))
         for n,l in enumerate(lset):
-            pygame.draw.rect(screen,(200,200,200),pygame.Rect(0,n*64+66,640,64))
-            Img.bcentrex(tfont,"WORLD 1-%s" % (str(l)),screen,n*64+70)
+            pygame.draw.rect(screen,(200,200,200),pygame.Rect(0,n*64+64-scrolly,640,64))
+            Img.bcentrex(tfont,"WORLD 1-%s" % (str(l)),screen,n*64+68-scrolly)
             if l!=maxlevel:
-                Img.bcentrex(tfont,"HIGH SCORE: "+str(hss[l-1]),screen,n*64+102,(0,200,0))
+                Img.bcentrex(tfont,"HIGH SCORE: "+str(hss[l-1]),screen,n*64+100-scrolly,(0,200,0))
         pygame.display.flip()
         clock.tick(60)
     level=[1,lsel]
