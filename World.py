@@ -48,7 +48,7 @@ class World(object):
         self.hs=hs
         self.new_pipe()
         self.level=level
-        self.nhs=None
+        self.nhs=False
     def render_update(self,screen,events):
         for e in events:
             if e.type==pygame.QUIT:
@@ -60,7 +60,7 @@ class World(object):
                         mx,my=[x//32-1 for x in [mx,my]]
                         obj=self.objects[mx][my]
                         if obj:
-                            if obj.fixed:
+                            if obj.fixed or obj.filled:
                                 continue
                             self.score-=100
                             bexp.play()
