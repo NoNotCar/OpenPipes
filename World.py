@@ -88,7 +88,7 @@ class World(object):
         if self.ttgo>0:
             self.ttgo-=10 if speed else 1
             Img.bcentrex(tfont,str(self.ttgo//60),screen,464)
-            if not self.ttgo:
+            if self.ttgo<=0:
                 self.ttflow=10 if speed else 120
                 self.objects[self.fx][self.fy].filled=True
                 alarm.play()
