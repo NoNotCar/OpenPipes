@@ -55,10 +55,10 @@ def bcentre(font, text, surface, offset=0, col=(0, 0, 0), xoffset=0):
     textrect.centery = surface.get_rect().centery + offset
     return surface.blit(render, textrect)
 
-def bcentrex(font, text, surface, y, col=(0, 0, 0)):
+def bcentrex(font, text, surface, y, col=(0, 0, 0), xoffset=0):
     render = font.render(str(text), True, col)
     textrect = render.get_rect()
-    textrect.centerx = surface.get_rect().centerx
+    textrect.centerx = surface.get_rect().centerx + xoffset
     textrect.top = y
     return surface.blit(render, textrect)
 

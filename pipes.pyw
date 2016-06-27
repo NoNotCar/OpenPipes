@@ -8,9 +8,10 @@ clock=pygame.time.Clock()
 pdf=pygame.font.get_default_font()
 tfont=pygame.font.Font(pdf,32)
 bfont=pygame.font.Font(pdf,64)
+sfont=pygame.font.Font(pdf,16)
 pygame.display.set_caption("OpenPipes")
 pygame.display.set_icon(Img.img32("PipeX"))
-medals={"S":[1500,3000,6000],"M":[2000,5000,9000],"H":[4000,10000,15000]}
+medals={"S":[1500,3000,6000],"M":[2000,5000,9000],"H":[4000,10000,14000]}
 medalcolours=[(0,0,0),(127,51,0),(240,240,240),(219,182,0)]
 lsel=None
 scrolly=0
@@ -70,6 +71,8 @@ while True:
             Img.bcentrex(tfont,"WORLD 1-%s" % (str(l)),screen,n*64+68-scrolly)
             if l!=maxlevel:
                 Img.bcentrex(tfont,"HIGH SCORE: "+str(hss[l-1]),screen,n*64+100-scrolly,medalcolours[amedals[n]])
+                if amedals[n]!=3:
+                    Img.bcentrex(sfont,str(medals[medallevels[n]][amedals[n]]),screen,n*64+108-scrolly,medalcolours[amedals[n]+1],200)
         pygame.display.flip()
         clock.tick(60)
     level=[1,lsel]
