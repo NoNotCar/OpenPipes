@@ -64,12 +64,10 @@ while True:
         n=-1
         if level[1]>len(hss):
             hss.append(world.score)
+            maxlevel+=1
         else:
             hss[level[1]-1]=world.score
         for n,hs in enumerate(hss):
             hsfile.write(str(hs)+("\n" if n+1<len(hss) else ""))
-        if n+1<level[1]:
-            hsfile.write(str(world.score))
-            maxlevel+=1
         hsfile.close()
     pygame.mixer.music.stop()
