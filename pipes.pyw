@@ -8,6 +8,8 @@ clock=pygame.time.Clock()
 pdf=pygame.font.get_default_font()
 tfont=pygame.font.Font(pdf,32)
 bfont=pygame.font.Font(pdf,64)
+pygame.display.set_caption("OpenPipes")
+pygame.display.set_icon(Img.img32("PipeX"))
 lsel=None
 try:
     hsfile=open("HS.sav")
