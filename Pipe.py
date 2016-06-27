@@ -11,6 +11,8 @@ class Pipe(object):
     filled=False
     name="Pipe"
     symb="P"
+    bonus=0
+    fixed=False
     def __init__(self,d):
         self.d=d
         self.get_ends(self.d)
@@ -24,10 +26,12 @@ class Pipe(object):
         self.filled=True
 class SPipe(Pipe):
     imgs=rloadf("Pipe")
+    symb = "SP"
     def get_ends(self,d):
         self.ends=[D.get_dir(d),D.get_dir(d+2)]
 class BPipe(Pipe):
     imgs=rloadf("PipeBend")
+    symb = "BP"
     def get_ends(self,d):
         self.ends=[D.get_dir(d),D.get_dir(d+1)]
 class XPipe(Pipe):
@@ -35,6 +39,7 @@ class XPipe(Pipe):
     lfill=None
     name="XPipe"
     ends=D.directions
+    symb = "XP"
     def get_other_end(self,ed):
         return D.anti(ed)
     def fill(self,ed):
@@ -53,6 +58,7 @@ class X2Pipe(Pipe):
     lfill=None
     name="XPipe"
     ends=D.directions
+    symb = "2XP"
     def get_other_end(self,ed):
         return D.rotdir(ed,1 if self.d%2==D.index(ed)%2 else -1)
     def fill(self,ed):
@@ -86,3 +92,9 @@ class Block(Pipe):
     symb = "B"
     def get_img(self):
         return self.img
+class GoldPipe(SPipe):
+    bonus=900
+    symb = "GP"
+    imgs=rload("PipeGold")
+    def get_img(self):
+        return SPipe.imgs[1][self.d] if self.filled else self.imgs[self.d]
