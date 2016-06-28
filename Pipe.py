@@ -114,8 +114,11 @@ class GoldPipe(SPipe):
     bonus=900
     symb = "GP"
     imgs=rload("PipeGold")
+    cimgs=rload("CableGold")
     def get_img(self):
         return SPipe.imgs[1][self.d] if self.filled else self.imgs[self.d]
+    def get_cimg(self):
+        return SPipe.cimgs[1][self.d] if self.filled else self.cimgs[self.d]
 class OWPipe(Pipe):
     imgs=rloadf("OWPipe")
     cimgs=rloadf("Diode")
