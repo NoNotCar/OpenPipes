@@ -15,8 +15,7 @@ alarm=Img.sndget("alarm")
 pdf=pygame.font.get_default_font()
 tfont=pygame.font.Font(pdf,32)
 bfont=pygame.font.Font(pdf,64)
-floor=Img.img32("Floor")
-ffloor=Img.img32("FloorFixed")
+floors=[[Img.img32("Floor"),Img.img32("FloorFixed")],[Img.img32("EFloor"),Img.img32("EFloorFixed")]]
 tt=Img.img("TileTab")
 sel=Img.img32("Sel")
 editorclasses=[Pipe.Source,Pipe.Drain,Pipe.Block,Pipe.GoldPipe,Pipe.SPipe,Pipe.BPipe,Pipe.XPipe,Pipe.X2Pipe,Pipe.OWPipe,
@@ -84,7 +83,7 @@ class World(object):
         for x in range(13):
             for y in range(13):
                 obj=self.objects[x][y]
-                screen.blit(ffloor if obj and obj.fixed else floor,(x*32+32,y*32+32))
+                screen.blit(floors[self.electric][bool(obj and obj.fixed)],(x*32+32,y*32+32))
                 if obj:
                     screen.blit(obj.get_cimg() if self.electric else obj.get_img(),(x*32+32,y*32+32))
         mx,my=pygame.mouse.get_pos()
@@ -104,6 +103,7 @@ class World(object):
             self.ttflow=10 if self.electric else 120
             obj=self.objects[self.fx][self.fy]
             if obj.name=="Resevoir" and obj.filllevel!=6:
+                pfill.play()
                 obj.filllevel+=1
                 self.ttflow=240 if obj.filllevel!=6 else 10 if self.electric else 120
             else:
@@ -212,7 +212,7 @@ class EditWorld(object):
         screen.fill((200,200,200))
         for x in range(13):
             for y in range(13):
-                screen.blit(floor,(x*32+32,y*32+32))
+                screen.blit(floors[0][0],(x*32+32,y*32+32))
                 if self.objects[x][y]:
                     screen.blit(self.objects[x][y].get_img(),(x*32+32,y*32+32))
         for n,o in enumerate(self.objlist):

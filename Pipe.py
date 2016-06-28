@@ -104,11 +104,12 @@ class Drain(Pipe):
         return self.img
 class Block(Pipe):
     img=Img.img32("Block")
+    cimg=Img.img32("EBlock")
     symb = "B"
     def get_img(self):
         return self.img
     def get_cimg(self):
-        return self.img
+        return self.cimg
 class GoldPipe(SPipe):
     bonus=900
     symb = "GP"
