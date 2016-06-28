@@ -14,6 +14,10 @@ Open source pipe game
 * -50pts per unused pipe
 * -100pts per pipe overwrite
 
+##SCREENSHOTS
+![1](https://github.com/NoNotCar/OpenPipes/blob/master/Assets/Screenshots/1.png "World 1")
+![2](https://github.com/NoNotCar/OpenPipes/blob/master/Assets/Screenshots/2.png "World 2")
+
 ## TIPS
 * Discard as little pipe as possible
 * Place pipe sections in advance
