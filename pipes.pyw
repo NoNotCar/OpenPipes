@@ -12,7 +12,7 @@ b1font=pygame.font.Font(pdf,60)
 sfont=pygame.font.Font(pdf,16)
 pygame.display.set_caption("OpenPipes")
 pygame.display.set_icon(Img.img32("PipeX"))
-medals={"S":[1500,3000,6000],"M":[2000,5000,9000],"H":[4000,10000,14000]}
+medals={"XS":[1000,2500,4500],"S":[1500,3000,6000],"M":[2000,5000,9000],"H":[4000,10000,14000]}
 medalcolours=[(0,0,0),(127,51,0),(240,240,240),(219,182,0)]
 lsel=None
 scrolly=0
@@ -32,7 +32,7 @@ while True:
     level=(y,x)
     try:
         testlevel=open(Img.np("levels//%s-%s.sav" % tuple(level)))
-        medallevels.append(testlevel.readline()[:1])
+        medallevels.append(testlevel.readline()[:-1])
         testlevel.close()
         x+=1
         if x==11:
