@@ -19,7 +19,7 @@ floors=[[Img.img32("Floor"),Img.img32("FloorFixed")],[Img.img32("EFloor"),Img.im
 tt=Img.img("TileTab")
 sel=Img.img32("Sel")
 editorclasses=[Pipe.Source,Pipe.Drain,Pipe.Block,Pipe.GoldPipe,Pipe.SPipe,Pipe.BPipe,Pipe.XPipe,Pipe.X2Pipe,Pipe.OWPipe,
-               Pipe.Resevoir]
+               Pipe.Resevoir,Pipe.TeleportB,Pipe.TeleportO]
 class World(object):
     size=(13,13)
     score=0
@@ -129,9 +129,18 @@ class World(object):
                     if np.name=="Resevoir":
                         np.filllevel=1
                         self.ttflow=240
-                    self.fx=tx
-                    self.fy=ty
-                    self.nd=np.get_other_end(self.nd)
+                    if np.name=="Teleport":
+                        for x,row in enumerate(self.objects):
+                            for y,obj in enumerate(row):
+                                if obj and obj.name=="Teleport" and obj.ttype!=np.ttype:
+                                    self.fx=x
+                                    self.fy=y
+                                    obj.filled=True
+                                    self.nd=obj.ends[0]
+                    else:
+                        self.fx=tx
+                        self.fy=ty
+                        self.nd=np.get_other_end(self.nd)
                     bonus=np.bonus
                     self.score+=100+np.bonus
                     if np.name=="XPipe" and np.lfill=="F":

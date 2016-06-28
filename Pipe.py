@@ -142,5 +142,19 @@ class Resevoir(Pipe):
         return self.cimgs[self.filllevel][self.d]
     def get_img(self):
         return self.imgs[self.filllevel][self.d]
+class TeleportB(Pipe):
+    cimgs = rloadf("Teleport1")
+    imgs=cimgs
+    bonus=400
+    name="Teleport"
+    ttype=0
+    symb = "TP1"
+    def get_ends(self,d):
+        self.ends=[D.get_dir(d)]
+class TeleportO(TeleportB):
+    cimgs=rloadf("Teleport2")
+    imgs=cimgs
+    ttype = 1
+    symb = "TP2"
 
 
