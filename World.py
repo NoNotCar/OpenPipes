@@ -6,6 +6,7 @@ import sys
 import Direction as D
 import random
 pfill=Img.sndget("fill")
+bfill=Img.sndget("bonus")
 exp=Img.sndget("explode")
 bexp=Img.sndget("bigexp")
 success=Img.sndget("win")
@@ -18,7 +19,8 @@ floor=Img.img32("Floor")
 ffloor=Img.img32("FloorFixed")
 tt=Img.img("TileTab")
 sel=Img.img32("Sel")
-editorclasses=[Pipe.Source,Pipe.Drain,Pipe.Block,Pipe.GoldPipe,Pipe.SPipe,Pipe.BPipe,Pipe.XPipe,Pipe.X2Pipe,Pipe.OWPipe]
+editorclasses=[Pipe.Source,Pipe.Drain,Pipe.Block,Pipe.GoldPipe,Pipe.SPipe,Pipe.BPipe,Pipe.XPipe,Pipe.X2Pipe,Pipe.OWPipe,
+               Pipe.Resevoir]
 class World(object):
     size=(13,13)
     score=0
@@ -29,6 +31,9 @@ class World(object):
     nd=(0,1)
     done=False
     def __init__(self,level,hs):
+        self.electric=not level[0]%2
+        if self.electric:
+            self.ttgo=5460
         self.objects=[[None]*self.size[1] for _ in range(self.size[0])]
         lfile=open(Img.np("levels//%s-%s.sav" % tuple(level)))
         llines=lfile.readlines()
@@ -80,8 +85,8 @@ class World(object):
             for y in range(13):
                 obj=self.objects[x][y]
                 screen.blit(ffloor if obj and obj.fixed else floor,(x*32+32,y*32+32))
-                if self.objects[x][y]:
-                    screen.blit(self.objects[x][y].get_img(),(x*32+32,y*32+32))
+                if obj:
+                    screen.blit(obj.get_cimg() if self.electric else obj.get_img(),(x*32+32,y*32+32))
         mx,my=pygame.mouse.get_pos()
         if all([32<=x<14*32 for x in [mx,my]]):
             mx,my=[x//32-1 for x in [mx,my]]
@@ -90,45 +95,63 @@ class World(object):
             self.ttgo-=10 if speed else 1
             Img.bcentrex(tfont,str(self.ttgo//60),screen,464)
             if self.ttgo<=0:
-                self.ttflow=10 if speed else 120
+                self.ttflow=10 if self.electric else 120
                 self.objects[self.fx][self.fy].filled=True
                 alarm.play()
         elif self.ttflow>0:
             self.ttflow-=10 if speed else 1
         else:
-            self.ttflow=120
-            tx=self.fx+self.nd[0]
-            ty=self.fy+self.nd[1]
-            if not (0<=tx<13 and 0<=ty<13):
-                self.fail(screen)
-                return None
-            np=self.objects[tx][ty]
-            self.nd=D.anti(self.nd)
-            if np and self.nd in np.ends:
-                np.fill(self.nd)
-                if np.name=="Drain":
-                    for row in self.objects:
-                        for obj in row:
-                            if obj and not obj.filled and obj.ends and not obj.fixed:
-                                self.score-=50
-                    self.win(screen)
-                    return None
-                self.fx=tx
-                self.fy=ty
-                self.nd=np.get_other_end(self.nd)
-                self.score+=100+np.bonus
-                if np.name=="XPipe" and np.lfill=="F":
-                    self.score+=400
-                pfill.play()
+            self.ttflow=10 if self.electric else 120
+            obj=self.objects[self.fx][self.fy]
+            if obj.name=="Resevoir" and obj.filllevel!=6:
+                obj.filllevel+=1
+                self.ttflow=240 if obj.filllevel!=6 else 10 if self.electric else 120
             else:
-                self.fail(screen)
-                return None
+                tx=self.fx+self.nd[0]
+                ty=self.fy+self.nd[1]
+                if not (0<=tx<13 and 0<=ty<13):
+                    self.fail(screen)
+                    return None
+                np=self.objects[tx][ty]
+                self.nd=D.anti(self.nd)
+                if np and self.nd in np.ends:
+                    np.fill(self.nd)
+                    if np.name=="Drain":
+                        for row in self.objects:
+                            for obj in row:
+                                if obj and not obj.filled and obj.ends and not obj.fixed:
+                                    self.score-=50
+                        self.win(screen)
+                        return None
+                    if np.name=="Resevoir":
+                        np.filllevel=1
+                        self.ttflow=240
+                    self.fx=tx
+                    self.fy=ty
+                    self.nd=np.get_other_end(self.nd)
+                    bonus=np.bonus
+                    self.score+=100+np.bonus
+                    if np.name=="XPipe" and np.lfill=="F":
+                        self.score+=400
+                        bonus=True
+                    if not (speed and self.electric):
+                        if bonus:
+                            bfill.play()
+                        else:
+                            pfill.play()
+
+                else:
+                    self.fail(screen)
+                    return None
         screen.blit(tt,(0,448))
-        screen.blit(self.nextpipe.get_img(),(16,464))
+        screen.blit(self.nextpipe.get_cimg() if self.electric else self.nextpipe.get_img(),(16,464))
         Img.bcentrex(tfont,"SCORE: "+str(self.score),screen,0,(0,0,0) if self.score>=0 else (255,0,0))
     def new_pipe(self):
         self.nextpipe=PipeGen.get_pipe()(random.randint(0,3))
-        self.nimg=self.nextpipe.get_img().copy()
+        if self.electric:
+            self.nimg=self.nextpipe.get_cimg().copy()
+        else:
+            self.nimg=self.nextpipe.get_img().copy()
         self.nimg.fill((255, 255, 255, 128), None, pygame.BLEND_RGBA_MULT)
     def fail(self,screen):
         screen.fill((0,0,0))

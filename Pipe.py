@@ -7,6 +7,7 @@ def rloadf(fil):
     return rload(fil),rload(fil+"F")
 class Pipe(object):
     imgs=None
+    cimgs=None
     ends=[]
     filled=False
     name="Pipe"
@@ -22,20 +23,25 @@ class Pipe(object):
         return self.ends[not self.ends.index(ed)]
     def get_img(self):
         return self.imgs[self.filled][self.d]
+    def get_cimg(self):
+        return self.cimgs[self.filled][self.d]
     def fill(self,ed):
         self.filled=True
 class SPipe(Pipe):
     imgs=rloadf("Pipe")
+    cimgs = rloadf("Cable")
     symb = "SP"
     def get_ends(self,d):
         self.ends=[D.get_dir(d),D.get_dir(d+2)]
 class BPipe(Pipe):
     imgs=rloadf("PipeBend")
+    cimgs = rloadf("CableBend")
     symb = "BP"
     def get_ends(self,d):
         self.ends=[D.get_dir(d),D.get_dir(d+1)]
 class XPipe(Pipe):
     imgs=[rload("PipeX"+x) for x in ["","T","B","F"]]
+    cimgs=[rload("CableX"+x) for x in ["","T","B","F"]]
     lfill=None
     name="XPipe"
     ends=D.directions
@@ -53,8 +59,12 @@ class XPipe(Pipe):
     def get_img(self):
         x=3 if self.lfill=="F" else 2 if self.lfill=="B" else 1 if self.lfill=="T" else 0
         return self.imgs[x][self.d]
+    def get_cimg(self):
+        x=3 if self.lfill=="F" else 2 if self.lfill=="B" else 1 if self.lfill=="T" else 0
+        return self.cimgs[x][self.d]
 class X2Pipe(Pipe):
     imgs=[rload("PipeX2"+x) for x in ["","T","B","F"]]
+    cimgs=[rload("CableX2"+x) for x in ["","T","B","F"]]
     lfill=None
     name="XPipe"
     ends=D.directions
@@ -74,15 +84,20 @@ class X2Pipe(Pipe):
     def get_img(self):
         x=3 if self.lfill=="F" else 2 if self.lfill=="B" else 1 if self.lfill=="T" else 0
         return self.imgs[x][self.d]
+    def get_cimg(self):
+        x=3 if self.lfill=="F" else 2 if self.lfill=="B" else 1 if self.lfill=="T" else 0
+        return self.cimgs[x][self.d]
 
 class Source(Pipe):
     symb = "S"
     imgs=rloadf("Source")
+    cimgs=rloadf("CableSource")
     def get_otherend(self,ed):
         return D.get_dir(self.d)
 class Drain(Pipe):
     symb = "D"
     img=Img.img32("Drain")
+    cimgs=rloadf("CableDrain")
     name="Drain"
     ends=D.directions
     def get_img(self):
@@ -91,6 +106,8 @@ class Block(Pipe):
     img=Img.img32("Block")
     symb = "B"
     def get_img(self):
+        return self.img
+    def get_cimg(self):
         return self.img
 class GoldPipe(SPipe):
     bonus=900
@@ -101,8 +118,27 @@ class GoldPipe(SPipe):
 class OWPipe(Pipe):
     imgs=rloadf("OWPipe")
     bonus = 200
+    symb = "OW"
     def get_ends(self,d):
         self.ends=[D.get_dir(d)]
     def get_other_end(self,ed):
         return D.anti(ed)
+class Resevoir(Pipe):
+    cimgs=[rload("CableR"+str(n)) for n in range(7)]
+    imgs=cimgs
+    filllevel=0
+    bonus=400
+    name="Resevoir"
+    symb = "R"
+    def get_ends(self,d):
+        self.ends=[D.get_dir(d),D.get_dir(d+2)]
+    def get_other_end(self,ed):
+        if D.get_dir(self.d)!=ed:
+            self.d=D.index(ed)
+        return D.anti(ed)
+    def get_cimg(self):
+        return self.cimgs[self.filllevel][self.d]
+    def get_img(self):
+        return self.imgs[self.filllevel][self.d]
+
 
