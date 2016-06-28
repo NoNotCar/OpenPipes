@@ -19,7 +19,7 @@ floors=[[Img.img32("Floor"),Img.img32("FloorFixed")],[Img.img32("EFloor"),Img.im
 tt=Img.img("TileTab")
 sel=Img.img32("Sel")
 editorclasses=[Pipe.Source,Pipe.Drain,Pipe.Block,Pipe.GoldPipe,Pipe.SPipe,Pipe.BPipe,Pipe.XPipe,Pipe.X2Pipe,Pipe.OWPipe,
-               Pipe.Resevoir,Pipe.TeleportB,Pipe.TeleportO]
+               Pipe.Resevoir,Pipe.TeleportB,Pipe.TeleportO,Pipe.OPipe]
 class World(object):
     size=(13,13)
     score=0
@@ -29,6 +29,7 @@ class World(object):
     fy=0
     nd=(0,1)
     done=False
+    warped=False
     def __init__(self,level,hs):
         self.electric=not level[0]%2
         if self.electric:
@@ -104,8 +105,8 @@ class World(object):
             self.ttflow-=10 if speed else 1
         else:
             self.ttflow=10 if self.electric else 120
-            obj=self.objects[self.fx][self.fy]
-            if obj.name=="Resevoir" and obj.filllevel!=7:
+            obj=None if not self.inworld(self.fx,self.fy) else self.objects[self.fx][self.fy]
+            if obj and obj.name=="Resevoir" and obj.filllevel!=7:
                 pfill.play()
                 obj.filllevel+=1
                 self.ttflow=240 if obj.filllevel!=7 else 10 if self.electric else 120
@@ -137,10 +138,17 @@ class World(object):
                                     self.fy=y
                                     obj.filled=True
                                     self.nd=obj.ends[0]
+                    elif not self.warped and np.name=="OutPipe":
+                        self.fx=tx
+                        self.fy=ty
+                        self.nd=np.get_other_end(self.nd)
+                        self.fx,self.fy=self.get_wrap_entry(self.nd in D.hoz,self.fx,self.fy)
+                        self.warped=True
                     else:
                         self.fx=tx
                         self.fy=ty
                         self.nd=np.get_other_end(self.nd)
+                        self.warped=False
                     bonus=np.bonus
                     self.score+=100+np.bonus
                     if np.name=="XPipe" and np.lfill=="F":
@@ -184,6 +192,14 @@ class World(object):
         pygame.display.flip()
         pygame.time.wait(2000)
         self.done="success"
+    def get_wrap_entry(self,hoz,x,y):
+        if hoz:
+            return (-1 if x==self.size[0]-1 else self.size[0]),y
+        else:
+            return x,(-1 if y==self.size[1]-1 else self.size[1])
+    def inworld(self,x,y):
+        return 0<=x<self.size[0] and 0<=y<self.size[1]
+
 class EditWorld(object):
     size=(13,13)
     score=0

@@ -159,5 +159,11 @@ class TeleportO(TeleportB):
     imgs=cimgs
     ttype = 1
     symb = "TP2"
-
+class OPipe(Pipe):
+    cimgs=rloadf("CableOut")
+    imgs=cimgs
+    symb = "OP"
+    name = "OutPipe"
+    def get_ends(self,d):
+        self.ends=[D.get_dir(d),D.get_dir(d+2)]
 

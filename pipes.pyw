@@ -13,7 +13,7 @@ sfont=pygame.font.Font(pdf,16)
 pygame.display.set_caption("OpenPipes")
 pygame.display.set_icon(Img.img32("PipeX"))
 medals={"XS":[1000,2500,4500],"S":[1500,3000,6000],"M":[2000,5000,9000],"H":[4000,10000,14000]}
-medalcolours=[(0,0,0),(127,51,0),(240,240,240),(219,182,0)]
+medalcolours=[(0,0,0),(127,51,0),(240,240,240),(255,255,0)]
 lsel=None
 scrolly=0
 try:
