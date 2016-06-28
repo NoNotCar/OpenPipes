@@ -118,6 +118,7 @@ class GoldPipe(SPipe):
         return SPipe.imgs[1][self.d] if self.filled else self.imgs[self.d]
 class OWPipe(Pipe):
     imgs=rloadf("OWPipe")
+    cimgs=rloadf("Diode")
     bonus = 200
     symb = "OW"
     def get_ends(self,d):
@@ -125,7 +126,7 @@ class OWPipe(Pipe):
     def get_other_end(self,ed):
         return D.anti(ed)
 class Resevoir(Pipe):
-    cimgs=[rload("CableR"+str(n)) for n in range(7)]
+    cimgs=[rload("CableR"+str(n)) for n in range(8)]
     imgs=cimgs
     filllevel=0
     bonus=400

@@ -77,6 +77,9 @@ class World(object):
                     self.score-=25
                     exp.play()
                     self.new_pipe()
+            elif e.type==pygame.KEYDOWN and e.key==pygame.K_ESCAPE:
+                self.fail(screen)
+                return None
         screen.fill((200,200,200))
         keys=pygame.key.get_pressed()
         speed=keys[pygame.K_LSHIFT]
@@ -102,10 +105,10 @@ class World(object):
         else:
             self.ttflow=10 if self.electric else 120
             obj=self.objects[self.fx][self.fy]
-            if obj.name=="Resevoir" and obj.filllevel!=6:
+            if obj.name=="Resevoir" and obj.filllevel!=7:
                 pfill.play()
                 obj.filllevel+=1
-                self.ttflow=240 if obj.filllevel!=6 else 10 if self.electric else 120
+                self.ttflow=240 if obj.filllevel!=7 else 10 if self.electric else 120
             else:
                 tx=self.fx+self.nd[0]
                 ty=self.fy+self.nd[1]
