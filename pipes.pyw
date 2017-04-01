@@ -83,6 +83,8 @@ while True:
                     am+=1
             amedals.append(am)
         breaking=False
+        truemax=maxlevel if maxlevel<umax else umax
+        wmax=(truemax-1)//10+1
         lsetmax=(truemax-(wsel-1)*10)+1
         lset=range(1,lsetmax if lsetmax<11 else 11)
         goingout=False
